@@ -1,434 +1,472 @@
-# MCP GraphQL Query Generator 🚀
+# 🚀 MCP GraphQL Query Generator
 
-## Overview
-The **MCP GraphQL Query Generator** is a smart and generic tool that **automatically discovers and generates GraphQL queries** for any API. Using **introspection**, it detects all available types (users, products, orders, etc.) and generates table-formatted queries with pagination, filters, and sorting.
+<div align="center">
 
-> **MCP (Model Context Protocol)** integration allows seamless use with VS Code and GitHub Copilot!
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Bun](https://img.shields.io/badge/Bun-000000?logo=bun&logoColor=white)](https://bun.sh/)
+[![VS Code](https://img.shields.io/badge/VS%20Code-007ACC?logo=visual-studio-code&logoColor=white)](https://code.visualstudio.com/)
+[![GitHub Copilot](https://img.shields.io/badge/GitHub%20Copilot-000000?logo=github&logoColor=white)](https://copilot.github.com/)
 
-## ✨ Key Features
 
-### 🔍 **Automatic Discovery**
-- **Automatic GraphQL API introspection**
-- Discovers all available `list*` types (listUsers, listProducts, listOrders, etc.)
-- No manual field configuration needed
+**A smart Model Context Protocol (MCP) server that automatically discovers and generates GraphQL queries for any API.**
+**Works with VS Code + GitHub Copilot, CLI, and REST API to make exploring and using GraphQL APIs effortless.**
 
-### 📋 **Smart Query Generation**
-- Generates **table-formatted** queries with complete pagination
-- Support for **filters**, **sorting**, and **pagination**
-- **Depth control** for nested fields
-- **Custom queries** with specific fields
+*Perfect for VS Code integration with GitHub Copilot! 🤖*
 
-### 🛠️ **Multiple Interfaces**
-- **Interactive CLI** for terminal use
-- **REST API** for integration with other tools
-- **HTTP Server** with automatic documentation
-- **VS Code integration** via MCP
+[Quick Start](#-quick-start) • [Features](#-features) • [VS Code Setup](#-vs-code-integration) • [API Reference](#-api-reference) • [Examples](#-examples)
 
-### 🔒 **Security & Flexibility**
-- Multiple authentication types support (Bearer Token, API Key, Keycloak)
-- Secure credential management via environment variables
-- TypeScript for type safety
+</div>
 
-## 🏗️ Arquitetura
+---
+## What is MCP?
+The Model Context Protocol (MCP) is a new protocol that lets tools, APIs, and models talk to each other in a structured way.
+Instead of manually copying data into your IDE or chat window, MCP servers can:
+    - Provide real-time API access directly inside VS Code or AI tools.
+    - Enable natural language queries ("show me all products with pagination").
+    - Act as connectors between AI assistants (like Copilot) and external systems.
+This project is an MCP server for GraphQL APIs:
+    - It introspects any GraphQL schema.
+    - Generates queries automatically.
+    - Exposes them through CLI, REST, and VS Code integration.
+In short: you don’t need to handcraft GraphQL queries anymore — just ask, and they’re generated for you.
 
-```
-mcp-graphql-query-generator/
-├── src/
-│   ├── app.ts                          # Ponto de entrada do servidor
-│   ├── cli.ts                          # Interface de linha de comando
-│   ├── config/
-│   │   └── credentials.ts              # Gerenciamento de credenciais
-│   ├── services/
-│   │   └── graphqlIntrospection.ts     # Serviço de introspection GraphQL
-│   ├── generators/
-│   │   └── genericQueryGenerator.ts    # Gerador genérico de queries
-│   └── mcp/
-│       └── server.ts                   # Servidor MCP com API REST
-├── .env.example                        # Template de variáveis de ambiente
-├── package.json                        # Configurações npm
-└── README.md                          # Esta documentação
-```
+## What is this?
 
-## 🚀 Instalação
+This tool **automatically introspects any GraphQL API** and generates intelligent, production-ready queries with:
 
-1. **Clone o repositório:**
-   ```bash
-   git clone https://github.com/yourusername/mcp-graphql-query-generator.git
-   cd mcp-graphql-query-generator
-   ```
+- **Auto-discovery** of all available queries and types in your GraphQL API
+- **Smart field selecion**, including nested types
+- **Table-formatted** queries with pagination, filtering, and sorting
+- **Natural language** integration with GitHub Copilot
+- **Zero configuration** - just point it to your GraphQL endpoint
+- **Multi-auth support** (Bearer, API Key, Keycloak, etc.)
+- **Multiple interfaces** (CLI, REST API, MCP Server, Web UI)
 
-2. **Instale as dependências:**
-   ```bash
-   # Com Bun (recomendado - mais rápido)
-   bun install
-   
-   # Ou com npm
-   npm install
-   ```
+## Features
 
-3. **Configure a API (opcional):**
-   ```bash
-   cp .env.example .env
-   # Edite o arquivo .env com a URL da sua API
-   ```
+### **For Developers**
+- **Instant GraphQL exploration** - No need to read documentation
+- **Smart query generation** - Automatically includes relevant fields
+- **Production-ready queries** - With proper pagination and error handling
+- **Type-safe** - Full TypeScript support
 
-   Exemplo de configuração no `.env`:
-   ```env
-   # URL da API GraphQL (obrigatório)
-   GRAPHQL_API_URL=https://your-api.example.com/graphql
-   
-   # Autenticação (opcional - muitas APIs funcionam sem)
-   # API_TOKEN=seu_token_bearer_aqui
-   # API_KEY=sua_api_key_aqui
-   
-   # Porta do servidor (opcional)
-   PORT=3000
-   ```
+### **For AI Integration**
+- **GitHub Copilot integration** - Ask questions in natural language
+- **VS Code extension ready** - Works globally across all projects
+- **Context-aware** - Understands your API structure
+- **Intelligent suggestions** - Based on your schema
 
-   **💡 Nota:** Muitas APIs GraphQL funcionam sem autenticação para introspection. Teste primeiro sem credenciais!
+### **For Teams**
+- **Consistent query patterns** - Standardized across projects
+- **Documentation generator** - Auto-generates API insights
+- **Multi-environment** - Dev, staging, prod configurations
+- **Docker ready** - Easy deployment and scaling
 
-## 🎯 Como Usar
+## Quick Start
 
-### 📱 CLI (Interface de Linha de Comando)
+### Option 1: Global VS Code Installation (Recommended)
 
-#### 1. **Descobrir queries disponíveis:**
-```bash
-# Com npm
-npm run cli list
-# ou
-npx ts-node src/cli.ts list
+Transform VS Code into a GraphQL powerhouse in 2 minutes:
 
-# Com Bun (recomendado - mais rápido)
-bun src/cli.ts list
-```
-**Saída esperada:**
-```
-🔍 Descobrindo queries disponíveis...
+```powershell
+# 1. Install Bun runtime (faster than Node.js)
+powershell -c "irm bun.sh/install.ps1 | iex"
 
-✅ Queries disponíveis:
+# 2. Clone and install globally
+git clone https://github.com/marias1lva/mcp-graphql-generator.git
+cd mcp-graphql-generator
+.\install-global.ps1
 
-  1. listInvoices
-  2. listOrganizationContacts  
-  3. listFixedAssets
-  4. listCostCenters
-  5. listProducts
-  ...
-  
-📊 Total: 98 queries encontradas
-```
-
-#### 2. **Analisar tipos de campos de uma query:**
-```bash
-# Análise completa com hierarquia
-bun src/cli.ts analyze listInvoices
-
-# Apenas campos escalares (String, Int, Boolean, etc.)
-bun src/cli.ts analyze listInvoices --scalars-only
-
-# Formato JSON para automação
-bun src/cli.ts analyze listInvoices --format json
-
-# Formato CSV para planilhas
-bun src/cli.ts analyze listInvoices --format csv
-
-# Controlar profundidade
-bun src/cli.ts analyze listInvoices --depth 2
-```
-**Saída esperada:**
-```
-🔍 Analisando tipos de campos para: listInvoices
-
-📋 Tipos de campos identificados:
-
-accessKey: String
-accountableOrganizationContact: OrganizationContact
-  ├─ subcampos (28):
-  ├─ accounts: [Account]
-  ├─ addresses: [Address]
-  ├─ name: String
-  └─ ...
-audited: Boolean
-issueDate: Date
-number: String
-
-📊 Resumo:
-   • Total de campos: 31
-   • Campos escalares: 8
-   • Objetos complexos: 23
-```
-
-#### 3. **Gerar query de tabela completa:**
-```bash
-# Com Bun (recomendado)
-bun src/cli.ts generate listInvoices
-
-# Com npm
-npm run cli generate listInvoices
-```
-
-#### 4. **Query customizada com campos específicos:**
-```bash
-bun src/cli.ts generate listInvoices --fields "id,status,number,issueDate"
-```
-
-#### 5. **Query simples (sem paginação):**
-```bash
-bun src/cli.ts generate listInvoices --simple
-```
-
-#### 6. **Controlar profundidade de campos aninhados:**
-```bash
-# Apenas 1 nível (sem subcampos)
-bun src/cli.ts generate listInvoices --depth 1
-
-# Até 3 níveis de profundidade
-bun src/cli.ts generate listInvoices --depth 3
-```
-
-#### 7. **Testar conexão:**
-```bash
-bun src/cli.ts test
-```
-
-#### 8. **Ver exemplos interativos:**
-```bash
-bun src/cli.ts help-examples
-```
-**Saída:** Mostra todos os exemplos de uso disponíveis com explicações detalhadas.
-**Resultado:**
-```graphql
-query table_listInvoices(
-  $page: Int! = 1
-  $pageSize: Int! = 10
-  $filters: [FlopFilters]!
-  $orderBy: [String]!
-  $orderDirections: [String]!
-) {
-  table: listInvoices(
-    params: {
-      page: $page
-      pageSize: $pageSize
-      filters: $filters
-      orderBy: $orderBy
-      orderDirections: $orderDirections
+# 3. Add to VS Code settings.json:
+{
+  "mcp.servers": {
+    "graphql-query-generator": {
+      "name": "GraphQL Query Generator",
+      "url": "http://localhost:3001",
+      "enabled": true
     }
-  ) {
-    data {
-      id
-      status
-      number
-      issueDate
-      series
-      costCenter {
-        id
-        name
-      }
-      itemsAmount
-      amount
-      taxAdditionAmount
-      observation
-    }
-    totalCount
-    totalPages
-    currentPage
-    pageSize
   }
 }
+
+# 4. Configure your API
+notepad %APPDATA%\MCPGraphQLServer\.env
+# Add: GRAPHQL_API_URL=https://your-api.example.com/graphql
 ```
 
+**That's it!** Now ask GitHub Copilot: *"List available GraphQL queries"*
 
+### Option 2: Local Development
 
-### 🌐 API REST
-
-#### 1. **Iniciar o servidor:**
 ```bash
-npm start
-# Servidor roda em http://localhost:3000
+# Clone and setup
+git clone https://github.com/marias1lva/mcp-graphql-generator.git
+cd mcp-graphql-generator
+bun install
+
+# Configure API
+cp .env.example .env
+# Edit .env with your GraphQL API URL
+
+# Start MCP server
+bun mcp-server.ts
+
+# Or use CLI directly
+bun src/cli.ts list
+bun src/cli.ts generate listUsers
 ```
 
-#### 2. **Endpoints disponíveis:**
+## VS Code Integration
 
-**📋 Gerar query de tabela:**
+Once installed, use natural language with GitHub Copilot:
+
+```
+👤 "List all available GraphQL queries"
+🤖 Found these queries:
+   • listUsers - Get all users with pagination
+   • listProducts - Browse products catalog  
+   • listOrders - View order history
+
+👤 "Generate a query to get users with their profiles"
+🤖 query ListUsers($first: Int, $after: String) {
+     listUsers(first: $first, after: $after) {
+       edges {
+         node {
+           id
+           name
+           email
+           profile {
+             firstName
+             lastName
+             avatar
+           }
+         }
+       }
+       pageInfo {
+         hasNextPage
+         endCursor
+       }
+     }
+   }
+
+👤 "What fields are available in the Product type?"
+🤖 Product type fields:
+   • id (ID!) - Unique identifier
+   • name (String!) - Product name
+   • price (Float!) - Product price
+   • description (String) - Product description
+   • category (Category) - Product category
+```
+
+## Usage Options
+
+### 1. **CLI Interface**
+
 ```bash
-POST /generate-table-query
+# Discover available queries
+bun src/cli.ts list
+
+# Generate a specific query
+bun src/cli.ts generate listUsers
+
+# Generate with options
+bun src/cli.ts generate listProducts --depth 3 --pagination
+
+# Interactive mode
+bun src/cli.ts interactive
+```
+
+### 2. **REST API**
+
+```http
+### Get all available queries
+GET http://localhost:3001/mcp/queries
+
+### Generate a specific query
+POST http://localhost:3001/mcp/generate-query
 Content-Type: application/json
 
 {
-  "queryName": "listInvoices",
+  "queryName": "listUsers",
   "options": {
     "includePagination": true,
-    "includeFilters": true,
-    "includeOrdering": true,
-    "maxDepth": 2
+    "maxDepth": 2,
+    "selectedFields": ["id", "name", "email"]
   }
 }
+
+### Analyze a type
+GET http://localhost:3001/mcp/analyze/User
 ```
 
-**🔍 Listar queries disponíveis:**
-```bash
-GET /available-queries
+### 3. **Programmatic Usage**
+
+```typescript
+import { GenericQueryGenerator } from './src/generators/genericQueryGenerator';
+
+const generator = new GenericQueryGenerator();
+
+// Get available queries
+const queries = await generator.getAvailableQueries();
+
+// Generate a table query
+const query = await generator.generateTableQuery('listUsers', {
+  includePagination: true,
+  maxDepth: 2
+});
+
+// Generate custom query
+const customQuery = await generator.generateCustomQuery('listUsers', 
+  ['id', 'name', 'email'], 
+  { includePagination: true }
+);
 ```
 
-**🎯 Query customizada:**
-```bash
-POST /generate-custom-query
-Content-Type: application/json
+## Configuration
 
+### Environment Variables
+
+```bash
+# Required: Your GraphQL API endpoint
+GRAPHQL_API_URL=https://your-api.example.com/graphql
+
+# Optional: Authentication
+API_TOKEN=your_bearer_token
+API_KEY=your_api_key
+
+# Optional: Keycloak authentication
+KEYCLOAK_CLIENT_ID=your_client_id
+KEYCLOAK_CLIENT_SECRET=your_client_secret
+KEYCLOAK_URL=https://your-keycloak.example.com/auth
+KEYCLOAK_REALM=your-realm
+
+# Optional: Server configuration
+MCP_PORT=3001
+MAX_DEPTH=3
+```
+
+### Per-Project Configuration
+
+Create `.vscode/settings.json` in your project:
+
+```json
 {
-  "queryName": "listInvoices",
-  "selectedFields": ["id", "status", "number", "issueDate"],
-  "options": {
-    "maxDepth": 1
+  "mcpGraphQL.projectSettings": {
+    "apiUrl": "https://project-specific-api.com/graphql",
+    "authToken": "${env:PROJECT_API_TOKEN}",
+    "defaultDepth": 2,
+    "enablePagination": true
   }
 }
 ```
 
-**📖 Documentação completa:**
+## Examples
+
+### Example Output - List Users Query
+
+```graphql
+query ListUsers($first: Int, $after: String, $orderBy: UserOrderByInput) {
+  listUsers(first: $first, after: $after, orderBy: $orderBy) {
+    edges {
+      node {
+        id
+        name
+        email
+        createdAt
+        profile {
+          firstName
+          lastName
+          avatar
+        }
+      }
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
+  }
+}
+```
+
+### Example Output - Products with Categories
+
+```graphql
+query ListProducts($first: Int, $after: String, $filters: ProductFiltersInput) {
+  listProducts(first: $first, after: $after, filters: $filters) {
+    edges {
+      node {
+        id
+        name
+        price
+        description
+        category {
+          id
+          name
+          slug
+        }
+        images {
+          url
+          alt
+        }
+      }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}
+```
+
+## Architecture
+
+```
+mcp-graphql-generator/
+├── src/
+│   ├── cli.ts                     # Command line interface
+│   ├── app.ts                     # HTTP server entry point
+│   ├── generators/
+│   │   └── genericQueryGenerator.ts  # Core query generation logic
+│   ├── services/
+│   │   ├── graphqlIntrospection.ts   # API discovery service
+│   │   └── keycloakAuth.ts           # Authentication service
+│   ├── mcp/
+│   │   └── server.ts                 # MCP protocol server
+│   ├── config/
+│   │   └── credentials.ts            # Credential management
+│   └── types/
+│       ├── auth.ts                   # Authentication types
+│       └── env.d.ts                  # Environment types
+├── mcp-server.ts              # MCP server entry point
+├── install-global.ps1         # Global VS Code installation
+├── configure-autostart.ps1    # Auto-start configuration
+├── docker-compose.global.yml  # Docker deployment
+└── docs/                      # Additional documentation
+```
+
+## Docker Deployment
+
+```yaml
+# docker-compose.yml
+version: '3.8'
+services:
+  mcp-server:
+    build: .
+    ports:
+      - "3001:3001"
+    environment:
+      - GRAPHQL_API_URL=https://your-api.example.com/graphql
+      - API_TOKEN=your_token
+    restart: unless-stopped
+```
+
 ```bash
-GET /help
+# Deploy with Docker
+docker-compose up -d
+
+# Or with Docker directly
+docker build -t mcp-graphql-generator .
+docker run -p 3001:3001 -e GRAPHQL_API_URL=https://your-api.com/graphql mcp-graphql-generator
 ```
 
-## 🎪 Exemplos Práticos
+## API Compatibility
 
-### Exemplo 1: Descobrir e Analisar API
+Works with any GraphQL API that supports introspection, including:
+
+- ✅ **Apollo Server** - Full compatibility
+- ✅ **GraphQL Yoga** - Full compatibility  
+- ✅ **Hasura** - Including metadata queries
+- ✅ **Postgraphile** - Auto-generated CRUD
+- ✅ **AWS AppSync** - With custom resolvers
+- ✅ **Shopify Admin API** - E-commerce queries
+- ✅ **GitHub GraphQL API** - Repository data
+- ✅ **Strapi GraphQL** - Headless CMS
+- ✅ **Contentful** - Content management
+- ✅ **Custom GraphQL APIs** - Any introspection-enabled API
+
+## Development
+
+### Setup Development Environment
+
 ```bash
-# 1. Primeiro, descubra quais queries estão disponíveis
-bun src/cli.ts list
+# Clone repository
+git clone https://github.com/marias1lva/mcp-graphql-generator.git
+cd mcp-graphql-generator
 
-# 2. Analise os campos de uma query específica
-bun src/cli.ts analyze listInvoices
+# Install dependencies
+bun install
 
-# 3. Veja apenas os campos escalares (mais simples)
-bun src/cli.ts analyze listInvoices --scalars-only
+# Copy environment template
+cp .env.example .env
+# Edit .env with your test GraphQL API
+
+# Start in development mode
+bun --watch mcp-server.ts
+
+# Run CLI in development
+bun --watch src/cli.ts list
+
+# Build for production
+bun build
+
+# Run tests (when implemented)
+bun test
 ```
 
-### Exemplo 2: Gerar Query Completa para Faturas
-```bash
-# Query completa com paginação, filtros e ordenação
-bun src/cli.ts generate listInvoices
+### Project Scripts
 
-# Query simples sem paginação
-bun src/cli.ts generate listInvoices --simple
+```json
+{
+  "scripts": {
+    "start": "bun src/app.ts",
+    "dev": "bun --watch mcp-server.ts", 
+    "build": "bun build",
+    "cli": "bun src/cli.ts",
+    "cli:list": "bun src/cli.ts list",
+    "cli:interactive": "bun src/cli.ts interactive"
+  }
+}
 ```
 
-### Exemplo 3: Query Customizada para Contatos
-```bash
-# Primeiro analise os campos disponíveis
-bun src/cli.ts analyze listOrganizationContacts --scalars-only
+## Contributing
 
-# Depois gere uma query com campos específicos
-bun src/cli.ts generate listOrganizationContacts --fields "id,name,email,phone"
-```
+We welcome contributions! Here's how to get started:
 
-### Exemplo 4: Controle de Profundidade
-```bash
-# Campos simples (sem objetos aninhados)
-bun src/cli.ts generate listFixedAssets --depth 1
+1. **Fork** the repository
+2. **Create** your feature branch (`git checkout -b feature/amazing-feature`)
+3. **Make** your changes with proper TypeScript types
+4. **Test** your changes with a real GraphQL API
+5. **Commit** your changes (`git commit -m 'Add amazing feature'`)
+6. **Push** to the branch (`git push origin feature/amazing-feature`)
+7. **Open** a Pull Request
 
-# Com subcampos (até 2 níveis)
-bun src/cli.ts generate listFixedAssets --depth 2
-```
+### Contribution Guidelines
 
-## ⚙️ Configuração Avançada
+- **TypeScript** - All code must be properly typed
+- **Bun** - Use Bun for package management and runtime
+- **Testing** - Include tests for new features
+- **Documentation** - Update README and inline docs
+- **Code Style** - Follow existing patterns
 
-### Autenticação
-O sistema suporta múltiplos tipos de autenticação:
+## License
 
-**Bearer Token:**
-```env
-GRAPHQL_API_URL=https://api.example.com/graphql
-API_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-```
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
-**API Key:**
-```env
-GRAPHQL_API_URL=https://api.example.com/graphql
-API_KEY=your-api-key-here
-API_SECRET=your-secret-here
-```
+## Acknowledgments
 
-### Controle de Profundidade
-Use `--depth` para controlar quantos níveis de campos aninhados incluir:
-```bash
-# Apenas campos diretos
-bun src/cli.ts generate listInvoices --depth 1
-
-# Até 3 níveis de profundidade  
-bun src/cli.ts generate listInvoices --depth 3
-```
-
-### Análise de Tipos
-Use o comando `analyze` para entender a estrutura antes de gerar queries:
-```bash
-# Ver todos os tipos
-bun src/cli.ts analyze listInvoices
-
-# Apenas campos escalares (String, Int, Boolean, etc.)
-bun src/cli.ts analyze listInvoices --scalars-only
-
-# Exportar para CSV
-bun src/cli.ts analyze listInvoices --format csv
-
-# Formato JSON para automação
-bun src/cli.ts analyze listInvoices --format json
-```
-
-## 🐛 Solução de Problemas
-
-### Erro de Conexão
-```bash
-❌ Falha na conexão: Failed to connect to GraphQL API
-```
-**Solução:**
-1. Verifique se `GRAPHQL_API_URL` está correto no `.env`
-2. Confirme se a API está online
-3. Teste as credenciais manualmente
-
-### Query Não Encontrada
-```bash
-❌ Erro: Query 'listSomething' not found in GraphQL schema
-```
-**Solução:**
-1. Execute `npm run cli list` para ver queries disponíveis
-2. Verifique se o nome está correto (case-sensitive)
-
-### Campos Vazios
-Se a query gerada não tem campos, pode ser:
-1. API não suporta introspection
-2. Tipo de retorno não segue padrão esperado
-3. Permissões insuficientes
-
-## 🤝 Contribuindo
-
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/MinhaFeature`)
-3. Commit suas mudanças (`git commit -m 'Add: MinhaFeature'`)
-4. Push para a branch (`git push origin feature/MinhaFeature`) 
-5. Abra um Pull Request
-
-## 📄 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para detalhes.
+- **[Bun](https://bun.sh/)** - For blazing fast JavaScript runtime
+- **[Model Context Protocol](https://modelcontextprotocol.io/)** - For VS Code integration standard  
+- **[GraphQL](https://graphql.org/)** - For the amazing query language
+- **[GitHub Copilot](https://copilot.github.com/)** - For AI-powered development
+- **[TypeScript](https://www.typescriptlang.org/)** - For type safety and developer experience
 
 ---
 
-## 🚀 **Comandos Essenciais (Resumo)**
+<div align="center">
 
-```bash
-# Listar queries disponíveis
-bun src/cli.ts list
+**⭐ Star this repo if it helped you! ⭐**
 
-# Analisar tipos de campos
-bun src/cli.ts analyze listInvoices
-
-# Gerar query completa
-bun src/cli.ts generate listInvoices
-
-# Testar conexão
-bun src/cli.ts test
-
-# Ver exemplos de uso
-bun src/cli.ts help-examples
-```
-
-**Feito com ❤️ para simplificar a geração de queries GraphQL**
+</div>
