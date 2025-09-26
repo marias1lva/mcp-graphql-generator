@@ -1,0 +1,29 @@
+# MCP GraphQL Server - Docker Compose Global
+version: '3.8'
+
+services:
+  mcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.global
+    container_name: mcp-graphql-server
+    ports:
+      - "3001:3001"
+    environment:
+      - MCP_PORT=3001
+      - GRAPHQL_URL=https://your-api.example.com/graphql
+    restart: unless-stopped
+    networks:
+      - mcp-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/mcp/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  mcp-network:
+    driver: bridge
+
+# Para usar globalmente:
+# docker-compose -f docker-compose.global.yml up -d
